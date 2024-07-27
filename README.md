@@ -141,6 +141,27 @@ yarn build
     }
     ```
 
+Класс состояния приложения:
+    ```
+    abstract class AppState implements IAppState {
+	order: IOrder;
+	customerInfo: ICustomer;
+	delivery: string;
+	payment: TPayment;
+	catalog: IProduct[];
+	basket: IProduct[];
+
+	constructor(order: IOrder, customerInfo:ICustomer, delivery: string, payment: TPayment, catalog: IProduct[], basket: IProduct[]) {
+            this.order = order;
+            this.customerInfo = customerInfo;
+            this.delivery = delivery;
+            this.payment = payment;
+            this.basket	= basket;
+        }
+	
+    }
+    ```
+
 - Взаимодействие с сервером описано с помощью интерфейса ```ILarekApi```. В нем 3 метода: получение списка товаров для каталога, получение информации по товару по ID и создание заказа
 
     ```
@@ -159,6 +180,19 @@ yarn build
         render(args?: object): unknown;
     }
     ```
+
+
+### Базовый класс брокера событий ```EventsEmitter```
+
+    Обеспечивает взаимодействие между объектами приложения на основании событий. Использует типы ```Subscriber``` (Подписчик) и ```EmitterEvent``` (Событие). 
+    Основные методы:
+    - ```on``` установить обработчик на событие
+    - ```off``` снять обработчик с события
+    - ```emit``` инициировать событие с данными
+
+    Описан в ```/components/base/events.ts```
+
+    Типы событий приложения описаны в ```enum AppEvents```
 
 ### Модели данных
 На основании описанных интерфейсов имплементируются классы с реализацией методов. Классы вынесены в отдельную директорию ```/components/model```

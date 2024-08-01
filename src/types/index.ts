@@ -9,7 +9,6 @@ export interface IProduct {
     category: string;
     price: number | null;
     image: string;
-    inBasket: boolean;
 }
 
 //Покупатель
@@ -29,11 +28,12 @@ export type TOrderStatus = 'basket' | 'payment' | 'contacts' | 'ordered';
 //Корзина
 export interface IBasket {
     items: IProduct[];
-    total: number;
 
     addProduct(product: IProduct): void;
     deleteProduct(productId: string): void;
     clearBasket(): void;
+    getProductsCount(): number | undefined ;
+    getTotalBasketSum(): number | undefined ;
 }
 
 //Заказ
@@ -64,6 +64,11 @@ export interface IOrderConfirmed extends IBasket {
     total: number;
 }
 
+export interface IOrderConfirmedResponse {
+    id: string;
+    total: number;
+}
+
 //Состояние приложения
 export interface IAppState {
     catalog: IProduct[];
@@ -88,9 +93,10 @@ export enum AppEvents {
 
 //Интерфейс для взаимодействием с сервером
 export interface ILarekApi {
-	getProductsList: () => Promise<ICatalogProductListResult>;
+    baseUrl: string;
+	getProductsList: () => Promise<IProduct[]>;
 	getProductData: (id: string) => Promise<IProduct>;
-	createOrder: (confirmedOrder: IOrderConfirmed) => Promise<IOrderConfirmed>;
+	createOrder: (confirmedOrder: IOrderConfirmed) => Promise<IOrderConfirmedResponse>;
 }
 
 //Интерфейс для рендера контента и навешивание обработчиков событий

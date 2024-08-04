@@ -1,6 +1,6 @@
 import { IBasket, IProduct } from "../../types";
 
-export abstract class Basket implements IBasket {
+export class Basket implements IBasket {
     items: IProduct[];
 
     constructor() {

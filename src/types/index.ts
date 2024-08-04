@@ -13,9 +13,12 @@ export interface IProduct {
 
 //Покупатель
 export interface ICustomer {
-    phone: string;
-    email: string;
+    contacts: {
+        phone: string;
+        email: string;
+    }
     address?: string;
+    clearData(): void;
 }
 
 //Тип оплаты
@@ -69,6 +72,7 @@ export interface IOrderConfirmedResponse {
     total: number;
 }
 
+
 //Состояние приложения
 export interface IAppState {
     catalog: IProduct[];
@@ -83,13 +87,18 @@ export interface IAppState {
 export enum AppEvents {
     CATALOG_ONLOAD = 'catalog:onload',
     CATALOG_UPDATE = 'catalog:update',
-    MODAL_OPEN = 'modal:open',
+    MODAL_SHOW = 'modal:show',
+    MODAL_HIDE = 'modal:hide',
     BASKET_UPDATE = 'basket:update',
     BASKET_CLEAR = 'basket:clear',
     ORDER_UPDATE = 'order:update',
     ORDER_CONFIRM = 'order:confirm',
     ORDER_CLEAR = 'order:clear'
 }
+
+export interface IAppEvents {
+    onClick: (event: MouseEvent) => void;
+  }
 
 //Интерфейс для взаимодействием с сервером
 export interface ILarekApi {

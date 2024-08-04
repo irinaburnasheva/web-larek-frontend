@@ -3,7 +3,6 @@ import {
 	ICustomer,
 	IOrder,
 	TPayment,
-	TDelivery
 } from '../../types/index';
 
 class Order implements IOrder {
@@ -22,7 +21,7 @@ class Order implements IOrder {
 		//реализация
 	}
 
-	setDelivery(delivery: TDelivery): void {
+	setDelivery(delivery: string): void {
 		//реализация
 	}
 

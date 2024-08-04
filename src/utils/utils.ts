@@ -10,6 +10,10 @@ export function isEmpty(value: any): boolean {
     return value === null || value === undefined;
 }
 
+export function getKeyByValue<T extends string | number>(obj: Record<string, T>, value: T): string {
+    return Object.entries(obj).find(([key]) => obj[key] === value)[0];
+};
+
 export type SelectorCollection<T> = string | NodeListOf<Element> | T[];
 
 export function ensureAllElements<T extends HTMLElement>(selectorElement: SelectorCollection<T>, context: HTMLElement = document as unknown as HTMLElement): T[] {

@@ -1,7 +1,8 @@
-import { IEvents } from "../base/events";
-import { IAppEvents, IProduct } from "../../types"; 
-import { settings } from "../../utils/constants";
-import { cloneTemplate, getKeyByValue } from "../../utils/utils";
+import { IEvents } from '../base/events';
+import { IAppEvents } from '../model/AppEvents';
+import { IProduct } from '../../types'; 
+import { settings } from '../../utils/constants';
+import { cloneTemplate, getKeyByValue } from '../../utils/utils';
 
 export class ProductCard {
     protected _productCardElement: HTMLElement;
@@ -23,14 +24,14 @@ export class ProductCard {
           }
     }
 
-    protected setProductCategory(product: IProduct):void {
+    protected _setProductCategoryColor(product: IProduct):void {
         this._productCardCategory.className = `card__category card__category_${getKeyByValue(settings.PRODUCT_CATEGORIES_COLOR, product.category)}`;
     }
 
     render(product: IProduct): HTMLElement {
         this._productCardTitle.textContent = product.title;
         this._productCardCategory.textContent = product.category;
-        this.setProductCategory(product);
+        this._setProductCategoryColor(product);
         this._productCardImage.src = product.image;
         this._productCardImage.alt = this._productCardTitle.textContent;
         this._productCardPrice.textContent = product.price ? String(product.price) + settings.CURRENCY_TEXT : 'Бесценно';

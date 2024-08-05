@@ -1,8 +1,8 @@
-import { IProduct, AppEvents } from "../../types";
-import { cloneTemplate, createElement } from "../../utils/utils";
-import { IEvents } from "../base/events";
-import { IBasketProductView } from "./BasketProduct";
-import { settings } from "../../utils/constants";
+import { AppEvents } from '../model/AppEvents';
+import { cloneTemplate, createElement } from '../../utils/utils';
+import { IEvents } from '../base/events';
+import { IBasketProductView } from './BasketProduct';
+import { settings } from '../../utils/constants';
 
 export interface IBasketView {
     basketElement: HTMLElement;
@@ -30,26 +30,25 @@ export class Basket implements IBasketView {
 
     constructor(template: HTMLTemplateElement, protected _events: IEvents) {
         this.basketElement = cloneTemplate(template);
-        this.basketProductsList = this.basketElement.querySelector('.basket_list');
-        this.basketTotalPrice = this.basketElement.querySelector('.basket_price');
-        this.basketConfirmButton = this.basketElement.querySelector('.basket_button');
+        this.basketProductsList = this.basketElement.querySelector('.basket__list');
+        this.basketTotalPrice = this.basketElement.querySelector('.basket__price');
+        this.basketConfirmButton = this.basketElement.querySelector('.basket__button');
         //для взаимодействия с корзиной на главном экране
-        this.headerBasketButton = document.querySelector('.header_basket');
-        this.headerBasketProductsCounter = document.querySelector('.header_basket-counter');
+        this.headerBasketButton = document.querySelector('.header__basket');
+        this.headerBasketProductsCounter = document.querySelector('.header__basket-counter');
 
-        this.basketConfirmButton.addEventListener('click', () => { this._events.emit(AppEvents.MODAL_SHOW)});
-        this.headerBasketButton.addEventListener('click', () => {this._events.emit(AppEvents.MODAL_SHOW)})
-
-        this.basketProducts = [];
+        this.basketConfirmButton.addEventListener('click', () => { this._events.emit(AppEvents.ODER_SHOW)});
+        this.headerBasketButton.addEventListener('click', () => {this._events.emit(AppEvents.BASKET_SHOW)})
     }
 
     renderBasketProducts(products: HTMLElement[]){
         if (products.length) {
             this.basketProductsList.replaceChildren(...products);
             this.basketConfirmButton.removeAttribute('disabled');
+
           } else {
             this.basketConfirmButton.setAttribute('disabled', 'true');
-            // this.basketProductsList.replaceChildren(createElement<HTMLParagraphElement>('span', { textContent: 'Ничего нет' }));
+            this.basketProductsList.replaceChildren(createElement<HTMLElement>('span', { textContent: '' }));
           }
     };
 
@@ -57,8 +56,12 @@ export class Basket implements IBasketView {
             this.headerBasketProductsCounter.textContent = String(value);
     };
 
-    renderTotalSum(totalSum: number) {
-        this.basketTotalPrice.textContent = String(totalSum + settings.CURRENCY_TEXT);
+    renderTotalSum(totalSum: number | null) {
+        if (totalSum) {
+            this.basketTotalPrice.textContent = String(totalSum + settings.CURRENCY_TEXT);
+        } else {
+            this.basketTotalPrice.textContent = '';
+        }
     };
 
     render() {

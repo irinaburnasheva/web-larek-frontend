@@ -1,4 +1,4 @@
-import { IBasket, IProduct } from "../../types";
+import { IBasket, IProduct } from '../../types';
 
 export class Basket implements IBasket {
     items: IProduct[];
@@ -11,7 +11,11 @@ export class Basket implements IBasket {
     get productsInBasket(): IProduct[] {
         return this.items;
     }
-    
+
+    set basketProducts(items: IProduct[]) {
+        this.items = items;
+      }
+
     //Добавление продукта в корзину
     addProduct(product: IProduct): void {
         this.items.push(product);
@@ -20,7 +24,7 @@ export class Basket implements IBasket {
     //Удаление продукта из корзины
     deleteProduct(productId: string): void {
         const arr: IProduct[] = this.items.filter(product => product.id == productId);
-        if (arr.length > 0) {
+        if (arr.length >= 0) {
             this.items.splice(arr.findIndex(product => product.id === productId), 1);
         }
     }
@@ -36,10 +40,10 @@ export class Basket implements IBasket {
     }
 
     //Получение общей стоимости продуктов в корзине
-    getTotalBasketSum(): number | undefined  {
+    getTotalBasketSum(): number | null {
         if (this.items.length > 0) {
             return this.items.reduce((accumulator, currentValue) => accumulator + (currentValue.price || 0), 0);
         }
-        else return undefined;
+        else return null;
     }
 }

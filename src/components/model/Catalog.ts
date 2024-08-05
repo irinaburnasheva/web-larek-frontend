@@ -1,5 +1,6 @@
-import { AppEvents, IProduct } from "../../types";
-import { IEvents } from "../base/events";
+import { AppEvents } from '../model/AppEvents';
+import { IProduct } from '../../types';
+import { IEvents } from '../base/events';
 
 export interface ICatalog {
   productCardList: IProduct[];
@@ -19,6 +20,10 @@ export class Catalog implements ICatalog {
     return this.productCardList;
   }
 
+  get selectedCard(): IProduct {
+    return this.selectedCard;
+  }
+
   set productsList(products: IProduct[]) {
     this.productCardList = products;
     this._events.emit(AppEvents.CATALOG_ONLOAD);
@@ -26,6 +31,6 @@ export class Catalog implements ICatalog {
 
   previewCard(product: IProduct) {
     this.selectedСard = product;
-    this._events.emit(AppEvents.MODAL_SHOW, product);
+    this._events.emit(AppEvents.PRODUCT_PREVIEW_SHOW, product);
   }
 }

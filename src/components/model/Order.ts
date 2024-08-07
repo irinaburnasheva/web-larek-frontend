@@ -1,35 +1,69 @@
 import {
-	IProduct,
-	ICustomer,
 	IOrder,
-	TPayment,
 } from '../../types/index';
+import { IEvents } from '../base/events';
+import { IAppEvents } from './AppEvents';
 
-class Order implements IOrder {
-    items: IProduct[];
+
+
+export class Order implements IOrder {
+    payment: string;
+    email: string;
+    phone: string;
     address: string;
-	email: string;
-	phone: string;
-    payment: TPayment;
-    total: number;
+    total: number | undefined;
+    items: string[];
+
+    constructor(protected _events: IEvents) {
+        this.payment = '';
+        this.email = '';
+        this.phone = '';
+        this.address = '';
+        this.total = undefined;
+        this.items = [];
+    }
+
+	setPayment(payment: string): void {
+		this.payment = payment;
+	}
+
+	setEmail(email: string): void {
+		this.email = email;
+	}
+
+	setPhone(phone: string): void {
+		this.phone = phone;
+	}
+
+	setAddress(address: string): void {
+		this.address = address;
+	}
+
+	setTotal(total: number): void {
+		this.total = total;
+	}
 
 	setItems(products: string[]): void {
-		//реализация
+		this.items = products;
 	}
 
-	setContacts(contacts: ICustomer): void {
-		//реализация
-	}
-
-	setDelivery(delivery: string): void {
-		//реализация
-	}
-
-	setPayment(payment: TPayment): void {
-		//реализация
+	get orderData(): IOrder {
+		return {
+			payment: this.payment,
+			email: this.email,
+			phone: this.phone,
+			address: this.address,
+			total: this.total,
+			items: this.items
+		}
 	}
 
 	resetOrderData(): void {
-		//реализация
+		this.payment = '';
+        this.email = '';
+        this.phone = '';
+        this.address = '';
+        this.total = undefined;
+        this.items = [];
 	}
 }

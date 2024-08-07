@@ -37,7 +37,7 @@ export class Basket implements IBasketView {
         this.headerBasketButton = document.querySelector('.header__basket');
         this.headerBasketProductsCounter = document.querySelector('.header__basket-counter');
 
-        this.basketConfirmButton.addEventListener('click', () => { this._events.emit(AppEvents.ODER_SHOW)});
+        this.basketConfirmButton.addEventListener('click', () => { this._events.emit(AppEvents.ORDER_FORM_SHOW)});
         this.headerBasketButton.addEventListener('click', () => {this._events.emit(AppEvents.BASKET_SHOW)})
     }
 

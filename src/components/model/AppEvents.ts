@@ -4,6 +4,9 @@ import { IProduct } from "../../types";
 export interface IAppEvents {
     onClick?: (event: MouseEvent) => void;
     onKeydown?: (event: KeyboardEvent) => void;
+    onSubmit?: (event: SubmitEvent ) => void;
+	onInput?: (event: InputEvent) => void;
+    onChange?: (event: FormDataEvent) => void;
 }
 
 //Типы событий в приложении
@@ -16,10 +19,14 @@ export enum AppEvents {
     PRODUCT_ADD_BASKET = 'productPreview:addBasket',
     BASKET_SHOW = 'basket:show',
     BASKET_CLEAR = 'basket:clear',
-    ODER_SHOW = 'orderForm:show',
+    ORDER_FORM_SHOW = 'orderForm:show',
+    ORDER_FORM_VALIDATE = 'orderForm:validate',
     ORDER_PAYMENT_CHOICE = 'orderForm:paymentChoice',
     ORDER_ADDRESS_ADD = 'orderForm:addressAdd',
-    CONTACTS_SHOW = 'contactsForm:show',
+    CONTACTS_FORM_SHOW = 'contactsForm:show',
     ORDER_CONFIRM = 'order:confirm',
-    ORDER_CLEAR = 'order:clear'
+    ORDER_CLEAR = 'order:clear',
+    STATUS_CLOSE = 'orderStatus:close',
+    ORDER_FORM_UPDATE = 'form:update',
+    CONTACTS_FORM_UPDATE = 'form:update',
 }

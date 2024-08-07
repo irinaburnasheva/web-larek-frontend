@@ -14,17 +14,21 @@ import { ProductCardModal } from './components/view/ProductCardModal';
 import { Modal } from './components/view/Modal';
 import { BasketProduct } from './components/view/BasketProduct';
 import { OrderForm } from './components/view/OrderForm';
+import { Form } from './components/model/Form';
+import { ContactsForm } from './components/view/ContactsForm';
+import { Order } from './components/model/Order';
+import { OrderStatus } from './components/view/OrderStatus';
 
 
 const appApi = new AppApi(CDN_URL, API_URL);
 const eventBroker = new EventEmitter();
 const modal = new Modal(eventBroker);
+const form = new Form(eventBroker);
 const catalog = new Catalog(eventBroker);
 const basket = new Basket();
 const order = new OrderForm(eventBroker);
-
-
-
+const contacts = new ContactsForm(eventBroker);
+const orderConfirmed = new Order(eventBroker);
 
 
 //Шаблоны HTML
@@ -49,6 +53,7 @@ function renderBasketProductsHandler() {
 
 function deleteProductFromBasketHandler(product: IProduct) {
     basket.deleteProduct(product.id);
+    basketView.renderHeaderBasketProductCounter(basket.getProductsCount());
     renderBasketProductsHandler();
 };
 
@@ -74,9 +79,48 @@ function addProductToBasketHandler() {
     modal.hide();
 }
 
-function orderFormShowHandlet() {
+function orderFormShowHandler() {
     const orderFormContent = order.render();
     modal.render(orderFormContent);
+}
+function contactsFormShowHandler() {
+    const contactsFormContent = contacts.render();
+    modal.render(contactsFormContent);
+}
+
+function orderFormValidateHandler() {
+    const payment = order.paymentTypeSelected;
+    const address = order.addressInput;
+    const validationResult = form.validateOrderForm(payment, address);
+    order.errorElement.textContent = (validationResult.errorText);
+    order.isValid(validationResult.isValid);
+}
+
+function contactsFormValidationHandler() {
+    const email = contacts.inputEmailElement.value;
+    const phone = contacts.inputPhoneElement.value;
+    const validationResult = form.validateContactsForm(email, phone);
+    contacts.errorElement.textContent = (validationResult.errorText);
+    contacts.isValid(validationResult.isValid);
+}
+
+function orderConfirmHandler(){
+    form.setItems(basket.productsInBasket.map(item => item.id));
+    form.setTotal(basket.getTotalBasketSum());
+    form.setPayment(order.paymentTypeSelected);
+    form.setAddress(order.addressInput.value);
+    form.setEmail(contacts.inputEmailElement.value);
+    form.setPhone(contacts.inputPhoneElement.value);
+
+    appApi.createOrder(form.orderData)
+    .then((data) => {
+      const orderStatus = new OrderStatus(eventBroker);
+      basket.clearBasket();
+      form.resetOrderData();
+      basketView.renderHeaderBasketProductCounter(basket.getProductsCount());
+      modal.render(orderStatus.render(data.total));
+    })
+    .catch(error => console.log(error));
 }
 
 eventBroker.on(AppEvents.CATALOG_ONLOAD, catalogOnLoadHandler);
@@ -86,7 +130,12 @@ eventBroker.on(AppEvents.MODAL_SHOW, () => modal.isLocked = true);
 eventBroker.on(AppEvents.MODAL_HIDE, () => modal.isLocked = false);
 eventBroker.on(AppEvents.PRODUCT_ADD_BASKET, addProductToBasketHandler);
 eventBroker.on(AppEvents.BASKET_SHOW, renderBasketProductsHandler);
-eventBroker.on(AppEvents.ODER_SHOW, orderFormShowHandlet);
+eventBroker.on(AppEvents.ORDER_FORM_SHOW, orderFormShowHandler);
+eventBroker.on(AppEvents.CONTACTS_FORM_SHOW, contactsFormShowHandler);
+eventBroker.on(AppEvents.ORDER_FORM_UPDATE, orderFormValidateHandler);
+eventBroker.on(AppEvents.CONTACTS_FORM_UPDATE, contactsFormValidationHandler);
+eventBroker.on(AppEvents.ORDER_CONFIRM, orderConfirmHandler);
+eventBroker.on(AppEvents.STATUS_CLOSE, () => modal.hide());
 
 appApi.getProductsList()
   .then(function (data: IProduct[]) {

@@ -1,5 +1,5 @@
 import { ApiListResponse, Api } from '../base/api';
-import { ILarekApi, IProduct, IOrderConfirmed, IOrderConfirmedResponse } from '../../types';
+import { ILarekApi, IProduct, IOrderConfirmed, IOrderConfirmedResponse, IOrder } from '../../types';
 
 export class AppApi extends Api implements ILarekApi {
     cdn: string;
@@ -28,7 +28,7 @@ export class AppApi extends Api implements ILarekApi {
     };
 
     //Оформление заказа
-    createOrder(confirmedOrder: IOrderConfirmed): Promise<IOrderConfirmedResponse> {
+    createOrder(confirmedOrder: IOrder): Promise<IOrderConfirmedResponse> {
         return this.post(`/order`, confirmedOrder).then((data: IOrderConfirmedResponse) => data);
     }
 }

@@ -13,20 +13,12 @@ export interface IProduct {
 
 //Покупатель
 export interface ICustomer {
-    contacts: {
-        phone: string;
-        email: string;
-    }
+    payment?: string;
     address?: string;
+    phone?: string;
+    email?: string;
     clearData(): void;
 }
-
-//Тип оплаты
-export type TPayment = 'online' | 'cash';
-
-
-//Этап оформления заказа
-export type TOrderStatus = 'basket' | 'payment' | 'contacts' | 'ordered';
 
 //Корзина
 export interface IBasket {
@@ -41,18 +33,12 @@ export interface IBasket {
 
 //Заказ
 export interface IOrder {
-    items: IProduct[];
+    items: string[];
     address: string;
 	email: string;
 	phone: string;
-    payment: TPayment;
+    payment: string;
     total: number;
-
-    setItems(products: string[]): void;
-    setContacts(contacts: ICustomer): void;
-    setDelivery(delivery: string): void;
-    setPayment(payment: TPayment): void;
-    resetOrderData(): void;
 }
 
 //Получены данные для каталога с сервера
@@ -72,23 +58,12 @@ export interface IOrderConfirmedResponse {
     total: number;
 }
 
-
-//Состояние приложения
-export interface IAppState {
-    catalog: IProduct[];
-    basket: IProduct[];
-    order: IOrder;
-    customerInfo: ICustomer;
-    delivery: string;
-    payment: TPayment;
-  }
-
 //Интерфейс для взаимодействием с сервером
 export interface ILarekApi {
     baseUrl: string;
 	getProductsList: () => Promise<IProduct[]>;
 	getProductData: (id: string) => Promise<IProduct>;
-	createOrder: (confirmedOrder: IOrderConfirmed) => Promise<IOrderConfirmedResponse>;
+	createOrder: (confirmedOrder: IOrder) => Promise<IOrderConfirmedResponse>;
 }
 
 //Интерфейс для рендера контента и навешивание обработчиков событий

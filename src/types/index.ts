@@ -11,15 +11,6 @@ export interface IProduct {
     image: string;
 }
 
-//Покупатель
-export interface ICustomer {
-    payment?: string;
-    address?: string;
-    phone?: string;
-    email?: string;
-    clearData(): void;
-}
-
 //Корзина
 export interface IBasket {
     items: IProduct[];

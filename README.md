@@ -62,16 +62,6 @@ yarn build
 
     ```
 
- - Покупатель - описывается интерфейсом ```ICustomer```. В нем указана контактная информация покупателя: телефон, электронная почта и адрес. Изначально эти данные неизвестны, при создании класса поля будут = пустым строкам, по мере заполнения данных в формах объект Customer будет обновляться пользовательскими данными по средством методов  setContacts (с формы указания контактов) и setAddress (с формы выбора доставки)
-
-    ```
-    export interface ICustomer {
-        phone: string;
-        email: string;
-        address?: string;
-    }
-    ```
-
  - Корзина описывается интерфейсом ```IBasket```. В ней содержаться данные списка товаров, которые добавлены в корзину и общая сумма за товары. У Корзины есть методы:
     * addProduct - для добавления товара в корзину,
     * deleteProduct - удаление товара из корзины,
@@ -101,68 +91,26 @@ yarn build
     }   
     ```
 
- Отдельно выделены типы оплаты, доставки и статуса заказа.
- - Тип оплаты может быть онлайн (картой) или при получении (наличными). Тип описан в ```TPayment```.
-
-    ```
-    type TPayment = 'online' | 'cash';
-    ```
-
- - Статус заказа требуется для отслеживания на каком этапе оформления находится заказ. Выделено 4 статуса: в корзине, выбор способов оплаты и доставки, заполнение контактов и, финальный - заказ оформлен. Сущность описана в ```TOrderStatus```.
-
-    ```
-    type TOrderStatus = 'basket' | 'payment' | 'contacts' | 'ordered';
-    ```
-
  - Для описания типов событий я приложении использован ```enum AppEvents```
 
     ```
     export enum AppEvents {
-        CATALOG_ONLOAD = 'catalog:onload', //загрузка товаров в каталог при загрузке страницы
-        CATALOG_UPDATE = 'catalog:update', //изменение в списке товаров в каталоге
-        MODAL_OPEN = 'modal:open', //открытие модального окна
-        BASKET_UPDATE = 'basket:update', //обновление корзины
-        BASKET_CLEAR = 'basket:clear', //очистка корзины
-        ORDER_UPDATE = 'order:update', //обновление заказа
-        ORDER_CONFIRM = 'order:confirm', //подтверждение заказа
-        ORDER_CLEAR = 'order:clear' //очистка данных заказа
+    CATALOG_ONLOAD = 'catalog:onload', //загрузка каталога товаров
+    MODAL_SHOW = 'modal:show', //открытие модального окна
+    MODAL_HIDE = 'modal:hide', //скрытие модального окна
+    PRODUCT_SELECT = 'product:select', //выбор продукта из каталога
+    PRODUCT_PREVIEW_SHOW = 'productPreview:show', //открытие модального окна с превьюшкой выбранного товара
+    PRODUCT_ADD_BASKET = 'productPreview:addBasket', //добавление выбранного товара из превью в корзину
+    BASKET_SHOW = 'basket:show', //открытие модального окна корзины
+    ORDER_FORM_SHOW = 'orderForm:show', // открытие формы типа оплаты и адреса
+    CONTACTS_FORM_SHOW = 'contactsForm:show', //открытие формы заполнения контактных данных
+    ORDER_CONFIRM = 'order:confirm', //подтверждение оформления заказа
+    ORDER_CLEAR = 'order:clear', //очистка данных заказа после оформления
+    STATUS_CLOSE = 'orderStatus:close', //закрытие модального окна статуса оформления заказа
+    ORDER_FORM_UPDATE = 'form:update', // обновление данных в форме доставки и адреса
+    CONTACTS_FORM_UPDATE = 'form:update', //обновление данных в форме контактных данных
     }
     ```   
-
-- Состояние приложения описывается интерфейсом ```IAppState```. Изначально данные заполнены дефолтными значениями
-Например, корзина пустая, контакты неизвестны, тип опланы онлайн. По мере взаимодействия с интерфейсом значения в полях будут меняться 
-
-    ```
-    export interface IAppState {
-        catalog: IProduct[];
-        basket: IProduct[];
-        order: IOrder;
-        customerInfo: ICustomer;
-        delivery: TDelivery;
-        payment: TPayment;
-    }
-    ```
-
-Класс состояния приложения:
-    ```
-    abstract class AppState implements IAppState {
-	order: IOrder;
-	customerInfo: ICustomer;
-	delivery: string;
-	payment: TPayment;
-	catalog: IProduct[];
-	basket: IProduct[];
-
-	constructor(order: IOrder, customerInfo:ICustomer, delivery: string, payment: TPayment, catalog: IProduct[], basket: IProduct[]) {
-            this.order = order;
-            this.customerInfo = customerInfo;
-            this.delivery = delivery;
-            this.payment = payment;
-            this.basket	= basket;
-        }
-	
-    }
-    ```
 
 - Взаимодействие с сервером описано с помощью интерфейса ```ILarekApi```. В нем 3 метода: получение списка товаров для каталога, получение информации по товару по ID и создание заказа
 
@@ -171,15 +119,6 @@ yarn build
             getProductsList: () => Promise<ICatalogProductListResult>;
             getProductData: (id: string) => Promise<IProduct>;
             createOrder: (confirmedOrder: IOrderConfirmed) => Promise<IOrderConfirmed>;
-    }
-    ```
-
-- Интерфейс для класса отрисивки контента ```IView```
-    ```
-    export interface IView {
-        element: HTMLElement;
-        events: IEvents;
-        render(args?: object): unknown;
     }
     ```
 
@@ -197,11 +136,36 @@ yarn build
     Типы событий приложения описаны в ```enum AppEvents```
 
 ### Модели данных
+
 На основании описанных интерфейсов имплементируются классы с реализацией методов. Классы вынесены в отдельную директорию ```/components/model```
 
 Выделены основные классы с моделями данных:
  - Продукт
- - Покупатель (контакты)
+    Класс продукта предоставляет структуру данных по продукту компонентам приложения 
+ - Каталог
+    Класс предоставляющий данные и методы для отображения карточек продуктов
  - Корзина
+    Класс с данными по продуктам в корзине
  - Заказ
- - Состояние приложения
+    Данные заказа: способ оплаты, адрес и тд
+ - Форма
+    Для работы с данными которые заполняются в формах
+
+
+### Модели отображения
+
+Классы отображения используют данные из моделей и отрисовывают компоненты. Классы вынесены в отдельную директорию ```/components/view```
+
+Выделены основные модели отображения
+- Каталог
+- Модальное окно
+- Карточка продукта
+- Превью карточки продукта
+- Корзина
+- Продукты в корзине
+- Форма доставки и оплаты
+- Форма контактов
+- Окно статуса заказа (заказ успешно оформлен)
+
+
+

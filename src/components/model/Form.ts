@@ -1,4 +1,4 @@
-import { ICustomer, IOrder } from "../../types";
+import { IOrder } from "../../types";
 import { IEvents } from "../base/events";
 import { AppEvents, IAppEvents } from "./AppEvents";
 import { Order } from "./Order";

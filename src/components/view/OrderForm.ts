@@ -63,6 +63,14 @@ export interface IOrderForm {
       this.submitButtonElement.disabled = !status;
     };
 
+    resetFormData():void {
+      this.paymentTypeSelected = '',
+      this.paymentTypeButtons.forEach(button => {
+        button.classList.remove('button_alt-active');
+      });
+      this.addressInputElement.value = ''
+  }
+
     render(){
       return this.orderFormElement;
     }

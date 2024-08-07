@@ -44,6 +44,11 @@ export class ContactsForm implements IContactsForm {
         this.submitButtonElement.disabled = !status;
     };
 
+    resetFormData():void {
+        this.inputEmailElement.value = '',
+        this.inputPhoneElement.value = ''
+    }
+
     render() {
         return this.contactsFormElement;
     };

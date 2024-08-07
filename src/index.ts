@@ -117,6 +117,9 @@ function orderConfirmHandler(){
       const orderStatus = new OrderStatus(eventBroker);
       basket.clearBasket();
       form.resetOrderData();
+      orderConfirmed.resetOrderData();
+      order.resetFormData();
+      contacts.resetFormData();
       basketView.renderHeaderBasketProductCounter(basket.getProductsCount());
       modal.render(orderStatus.render(data.total));
     })
@@ -135,7 +138,7 @@ eventBroker.on(AppEvents.CONTACTS_FORM_SHOW, contactsFormShowHandler);
 eventBroker.on(AppEvents.ORDER_FORM_UPDATE, orderFormValidateHandler);
 eventBroker.on(AppEvents.CONTACTS_FORM_UPDATE, contactsFormValidationHandler);
 eventBroker.on(AppEvents.ORDER_CONFIRM, orderConfirmHandler);
-eventBroker.on(AppEvents.STATUS_CLOSE, () => modal.hide());
+eventBroker.on(AppEvents.STATUS_CLOSE, () => {modal.hide()});
 
 appApi.getProductsList()
   .then(function (data: IProduct[]) {
